@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>サムライサロン - 報酬一覧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            background: 
+                linear-gradient(rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.9)),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23334155" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="%23111827"/><rect width="100" height="100" fill="url(%23grid)"/><circle cx="20" cy="20" r="1" fill="%234f46e5" opacity="0.6"/><circle cx="80" cy="30" r="1.5" fill="%2306b6d4" opacity="0.4"/><circle cx="60" cy="70" r="1" fill="%2310b981" opacity="0.5"/><circle cx="30" cy="80" r="1.2" fill="%23f59e0b" opacity="0.4"/><rect x="40" y="10" width="20" height="2" fill="%236366f1" opacity="0.3"/><rect x="10" y="50" width="15" height="1.5" fill="%2306b6d4" opacity="0.4"/><rect x="70" y="60" width="25" height="1" fill="%2310b981" opacity="0.3"/></svg>');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #60a5fa, #34d399, #fbbf24);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* タブナビゲーション */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 0 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        /* タブコンテンツ */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* お客様報酬一覧のスタイル */
+        .rewards-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .rewards-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .rewards-table th {
+            background: #ecf0f1;
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #bdc3c7;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .rewards-table td {
+            padding: 15px;
+            border: 1px solid #bdc3c7;
+            background: white;
+        }
+
+        .rewards-table tr:nth-child(even) td {
+            background: #f8f9fa;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: right;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .highlight {
+            background: #fff3cd !important;
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            font-size: 14px;
+            color: #555;
+            border-radius: 8px;
+        }
+
+        /* 紹介報酬一覧のスタイル */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
+        .card.zoom { --accent-color: #4f46e5; }
+        .card.ec { --accent-color: #059669; }
+        .card.device { --accent-color: #dc2626; }
+        .card.mnp { --accent-color: #ea580c; }
+        .card.luxury { --accent-color: #7c2d12; }
+        .card.other { --accent-color: #9333ea; }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .reward-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .reward-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .reward-name {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .reward-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+
+        .reward-note {
+            font-size: 0.85rem;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .special-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .high-value {
+            position: relative;
+        }
+
+        .high-value::after {
+            content: '💎';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 1.2rem;
+        }
+
+        .details-toggle {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 15px auto 0;
+        }
+
+        .details-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .details-toggle.active {
+            background: #374151;
+        }
+
+        .card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .card-details.show {
+            max-height: 500px;
+        }
+
+        .details-content {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 4px solid var(--accent-color);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .details-section {
+            margin-bottom: 15px;
+        }
+
+        .details-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .details-title {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .details-text {
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .details-list {
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 0.9rem;
+            padding-left: 15px;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .arrow.rotate {
+            transform: rotate(180deg);
+        }
+
+        /* プレゼンテーション機能 */
+        .presentation-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: rgba(79, 70, 229, 0.9);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+
+            .tab-navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .tab-button {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 サムライサロン報酬一覧</h1>
+            <p>お客様報酬と紹介報酬の詳細情報</p>
+        </div>
+
+        <!-- タブナビゲーション -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="showTab('customer-rewards')">
+                📊 お客様報酬
+            </button>
+            <button class="tab-button" onclick="showTab('referral-rewards')">
+                💰 紹介報酬
+            </button>
+        </div>
+
+        <!-- お客様報酬タブ -->
+        <div id="customer-rewards" class="tab-content active">
+            <div class="rewards-section">
+                <div class="section">
+                    <div class="section-title">🔍 ZOOM案件</div>
+                    <table class="rewards-table">
+                        <thead>
+                            <tr>
+                                <th>案件名</th>
+                                <th>報酬額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>勉強会</td>
+                                <td class="price">4,000円/月</td>
+                            </tr>
+                            <tr>
+                                <td>覆面モニター</td>
+                                <td class="price">12,000円/月</td>
+                            </tr>
+                            <tr>
+                                <td>不動産モニター</td>
+                                <td class="price">8,000円/月</td>
+                            </tr>
+                            <tr>
+                                <td>戸建モニター</td>
+                                <td class="price">7,000円/月</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🛒 ECショップ</div>
+                    <table class="rewards-table">
+                        <tbody>
+                            <tr>
+                                <td>ECショップ案件</td>
+                                <td class="price">40,000円/月</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🏠 家電</div>
+                    <table class="rewards-table">
+                        <tbody>
+                            <tr>
+                                <td>家電案件</td>
+                                <td class="price">30,000円/日</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📱 MNP案件</div>
+                    <table class="rewards-table">
+                        <thead>
+                            <tr>
+                                <th>地域</th>
+                                <th>報酬額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>関東</td>
+                                <td class="price">65,000円前後/日</td>
+                            </tr>
+                            <tr>
+                                <td>関西</td>
+                                <td class="price">65,000円前後/日</td>
+                            </tr>
+                            <tr>
+                                <td>名古屋</td>
+                                <td class="price">65,000円前後/日</td>
+                            </tr>
+                            <tr>
+                                <td>全国</td>
+                                <td class="price">60,000円/日</td>
+                            </tr>
+                            <tr>
+                                <td>沖縄</td>
+                                <td class="price">35,000円/日</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📍 関西（大阪地域）限定 MNP</div>
+                    <table class="rewards-table">
+                        <tbody>
+                            <tr class="highlight">
+                                <td>大阪地域限定MNP</td>
+                                <td class="price">45,000円/日</td>
+                            </tr>
+                            <tr class="highlight">
+                                <td>月間最大</td>
+                                <td class="price">720,000円/月</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">⌚ 日当保証ロレックス</div>
+                    <table class="rewards-table">
+                        <tbody>
+                            <tr>
+                                <td>日当保証分</td>
+                                <td class="price">3,000円/日</td>
+                            </tr>
+                            <tr class="highlight">
+                                <td>購入完了時</td>
+                                <td class="price">800,000円/購入完了</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note">※購入モデルにより変動あり</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">💍 日当保証ゴローズ</div>
+                    <table class="rewards-table">
+                        <tbody>
+                            <tr>
+                                <td>日当保証分</td>
+                                <td class="price">3,000円/日</td>
+                            </tr>
+                            <tr>
+                                <td>購入完了時</td>
+                                <td class="price">30,000円/購入完了</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note">※購入モデルにより変動あり</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">👩 女性限定アフィリエイト</div>
+                    <table class="rewards-table">
+                        <tbody>
+                            <tr>
+                                <td>女性限定<br>アフィリエイト</td>
+                                <td class="price">3,000円/3件完了</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="footer-note">
+                    <strong>注意事項：</strong><br>
+                    • 上記金額は最大利益での表示となります<br>
+                    • 案件により条件や変動がある場合があります<br>
+                    • 詳細はDiscordで各案件の個別説明をご確認ください
+                </div>
+            </div>
+        </div>
+
+        <!-- 紹介報酬タブ -->
+        <div id="referral-rewards" class="tab-content">
+            <!-- プレゼンテーション コントロール -->
+            <div class="presentation-controls">
+                <button class="control-btn" onclick="expandAllDetails()">
+                    📋 全詳細表示
+                </button>
+                <button class="control-btn" onclick="collapseAllDetails()" style="margin-top: 10px;">
+                    📋 全詳細閉じる
+                </button>
+            </div>
+
+            <div class="grid">
+                <!-- ZOOM案件 -->
+                <div class="card zoom">
+                    <div class="card-title">
+                        <div class="card-icon">Z</div>
+                        ZOOM案件
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-name">未来勉強会</div>
+                        <div class="reward-price">100円/人</div>
+                        <div class="reward-note">月4.5回</div>
+                    </div>
+
+                    <div class="reward-item">
+                        <div class="reward-name">未来勉強会モニター</div>
+                        <div class="reward-price">250円/人</div>
+                        <div class="reward-note">月3.4回</div>
+                    </div>
+
+                    <div class="reward-item">
+                        <div class="reward-name">覆面モニターオンライン</div>
+                        <div class="reward-price">500円/人</div>
+                        <div class="reward-note">10件</div>
+                    </div>
+
+                    <div class="reward-item">
+                        <div class="reward-name">覆面モニターオフライン</div>
+                        <div class="reward-price">500円/人</div>
+                        <div class="reward-note">20件</div>
+                    </div>
+
+                    <div class="reward-item">
+                        <div class="reward-name">不動産モニター</div>
+                        <div class="reward-price">500円/人</div>
+                        <div class="reward-note">1軒で3件まで可能</div>
+                    </div>
+
+                    <div class="reward-item">
+                        <div class="reward-name">戸建てモニター</div>
+                        <div class="reward-price">500円/人</div>
+                        <div class="reward-note">1回のみ</div>
+                    </div>
+
+                    <button class="details-toggle" onclick="toggleDetails(this)">
+                        詳細を見る <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="card-details">
+                        <div class="details-content">
+                            <div class="details-section">
+                                <div class="details-title">案件概要</div>
+                                <div class="details-text">
+                                    ZOOMを使用したオンライン案件です。自宅で参加できるため、時間や場所の制約が少なく、副業初心者にもおすすめです。
+                                </div>
+                            </div>
+                            <div class="details-section">
+                                <div class="details-title">参加条件</div>
+                                <div class="details-list">
+                                    • インターネット環境<br>
+                                    • ZOOMアプリのインストール<br>
+                                    • カメラ・マイク機能<br>
+                                    • 安定した通信環境
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ECショップ案件 -->
+                <div class="card ec">
+                    <div class="card-title">
+                        <div class="card-icon">🛒</div>
+                        ECショップ案件
+                    </div>
+                    
+                    <div class="reward-item high-value">
+                        <div class="reward-name">ECショップ案件</div>
+                        <div class="reward-price">1,000円/人</div>
+                        <div class="reward-note">高単価案件</div>
+                    </div>
+
+                    <button class="details-toggle" onclick="toggleDetails(this)">
+                        詳細を見る <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="card-details">
+                        <div class="details-content">
+                            <div class="details-section">
+                                <div class="details-title">案件概要</div>
+                                <div class="details-text">
+                                    オンラインショッピングサイトでの購入体験に関する案件です。実際に商品を購入してレビューを書く形式です。
+                                </div>
+                            </div>
+                            <div class="details-section">
+                                <div class="details-title">注意事項</div>
+                                <div class="details-list">
+                                    • 商品代金は自己負担<br>
+                                    • 購入後レビューの提出が必須<br>
+                                    • 指定された商品のみ対象<br>
+                                    • 返品・交換は不可
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 家電案件 -->
+                <div class="card device">
+                    <div class="card-title">
+                        <div class="card-icon">🏠</div>
+                        家電案件
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-name">家電購入案件</div>
+                        <div class="reward-price">500円/人</div>
+                        <div class="reward-note">家電製品の購入体験</div>
+                    </div>
+
+                    <button class="details-toggle" onclick="toggleDetails(this)">
+                        詳細を見る <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="card-details">
+                        <div class="details-content">
+                            <div class="details-section">
+                                <div class="details-title">案件概要</div>
+                                <div class="details-text">
+                                    家電製品の購入体験に関する案件です。実際に家電を購入して使用体験をレポートする形式です。
+                                </div>
+                            </div>
+                            <div class="details-section">
+                                <div class="details-title">対象商品例</div>
+                                <div class="details-list">
+                                    • 小型家電（炊飯器、トースターなど）<br>
+                                    • 生活家電（掃除機、空気清浄機など）<br>
+                                    • 美容家電（ヘアドライヤー、美容機器など）
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MNP案件 -->
+                <div class="card mnp">
+                    <div class="card-title">
+                        <div class="card-icon">📱</div>
+                        MNP案件
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-name">MNP案件</div>
+                        <div class="reward-price">300円/人</div>
+                        <div class="reward-note">携帯電話番号ポータビリティ</div>
+                    </div>
+
+                    <button class="details-toggle" onclick="toggleDetails(this)">
+                        詳細を見る <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="card-details">
+                        <div class="details-content">
+                            <div class="details-section">
+                                <div class="details-title">案件概要</div>
+                                <div class="details-text">
+                                    携帯電話の番号を他社に移す際の体験に関する案件です。実際にMNP手続きを行い、その体験をレポートします。
+                                </div>
+                            </div>
+                            <div class="details-section">
+                                <div class="details-title">手続き内容</div>
+                                <div class="details-list">
+                                    • 現在の契約解除手続き<br>
+                                    • 新規契約手続き<br>
+                                    • 番号移行手続き<br>
+                                    • 体験レポートの提出
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 高級品案件 -->
+                <div class="card luxury">
+                    <div class="card-title">
+                        <div class="card-icon">💎</div>
+                        高級品案件
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-name">ロレックス購入案件</div>
+                        <div class="reward-price">2,000円/人</div>
+                        <div class="reward-note">高級時計の購入体験</div>
+                    </div>
+
+                    <div class="reward-item">
+                        <div class="reward-name">ゴローズ購入案件</div>
+                        <div class="reward-price">1,500円/人</div>
+                        <div class="reward-note">高級ジュエリーの購入体験</div>
+                    </div>
+
+                    <button class="details-toggle" onclick="toggleDetails(this)">
+                        詳細を見る <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="card-details">
+                        <div class="details-content">
+                            <div class="details-section">
+                                <div class="details-title">案件概要</div>
+                                <div class="details-text">
+                                    高級ブランド商品の購入体験に関する案件です。実際に商品を購入して使用体験をレポートします。
+                                </div>
+                            </div>
+                            <div class="details-section">
+                                <div class="details-title">注意事項</div>
+                                <div class="details-list">
+                                    • 高額商品のため慎重な検討が必要<br>
+                                    • 商品代金は自己負担<br>
+                                    • 購入後レビューの提出が必須<br>
+                                    • 返品・交換は不可
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- その他案件 -->
+                <div class="card other">
+                    <div class="card-title">
+                        <div class="card-icon">✨</div>
+                        その他案件
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-name">女性限定アフィリエイト</div>
+                        <div class="reward-price">200円/人</div>
+                        <div class="reward-note">女性向け商品の紹介</div>
+                    </div>
+
+                    <div class="reward-item">
+                        <div class="reward-name">その他案件</div>
+                        <div class="reward-price">100-500円/人</div>
+                        <div class="reward-note">案件により変動</div>
+                    </div>
+
+                    <button class="details-toggle" onclick="toggleDetails(this)">
+                        詳細を見る <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="card-details">
+                        <div class="details-content">
+                            <div class="details-section">
+                                <div class="details-title">案件概要</div>
+                                <div class="details-text">
+                                    様々な商品やサービスの紹介・体験に関する案件です。案件の内容により報酬が変動します。
+                                </div>
+                            </div>
+                            <div class="details-section">
+                                <div class="details-title">対象案件例</div>
+                                <div class="details-list">
+                                    • 化粧品・美容商品<br>
+                                    • ファッション商品<br>
+                                    • 食品・飲料<br>
+                                    • サービス体験
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // タブ切り替え機能
+        function showTab(tabName) {
+            // すべてのタブコンテンツを非表示
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // すべてのタブボタンからactiveクラスを削除
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // 選択されたタブを表示
+            document.getElementById(tabName).classList.add('active');
+            
+            // クリックされたボタンにactiveクラスを追加
+            event.target.classList.add('active');
+        }
+
+        // 詳細表示切り替え機能
+        function toggleDetails(button) {
+            const details = button.nextElementSibling;
+            const arrow = button.querySelector('.arrow');
+            
+            if (details.classList.contains('show')) {
+                details.classList.remove('show');
+                button.classList.remove('active');
+                arrow.classList.remove('rotate');
+            } else {
+                details.classList.add('show');
+                button.classList.add('active');
+                arrow.classList.add('rotate');
+            }
+        }
+
+        // 全詳細表示
+        function expandAllDetails() {
+            const details = document.querySelectorAll('.card-details');
+            const buttons = document.querySelectorAll('.details-toggle');
+            const arrows = document.querySelectorAll('.arrow');
+            
+            details.forEach(detail => detail.classList.add('show'));
+            buttons.forEach(button => button.classList.add('active'));
+            arrows.forEach(arrow => arrow.classList.add('rotate'));
+        }
+
+        // 全詳細閉じる
+        function collapseAllDetails() {
+            const details = document.querySelectorAll('.card-details');
+            const buttons = document.querySelectorAll('.details-toggle');
+            const arrows = document.querySelectorAll('.arrow');
+            
+            details.forEach(detail => detail.classList.remove('show'));
+            buttons.forEach(button => button.classList.remove('active'));
+            arrows.forEach(arrow => arrow.classList.remove('rotate'));
+        }
+    </script>
+</body>
+</html> 
